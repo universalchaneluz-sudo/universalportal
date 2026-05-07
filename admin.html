@@ -7,70 +7,47 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #eef2f3; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        
-        /* Логин */
         #login-section { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 350px; text-align: center; }
-        
-        /* Асосий Контейнер */
         #admin-main-content { background: white; width: 95%; max-width: 900px; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin: 20px; display: none; }
-
-        .header-area { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #f4f4f4; padding-bottom: 15px; flex-wrap: wrap; gap: 10px; }
-        
-        .nav-buttons { display: flex; gap: 10px; }
-        
+        .header-area { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #f4f4f4; padding-bottom: 15px; }
         input, textarea, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-        
         button { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-primary { background: #3498db; color: white; width: 100%; font-size: 18px; }
-        .btn-home { background: #2ecc71; color: white; text-decoration: none; display: inline-flex; align-items: center; font-size: 14px; padding: 10px 15px; border-radius: 8px; }
+        .btn-primary { background: #3498db; color: white; width: 100%; font-size: 18px; margin-top: 10px; }
+        .btn-home { background: #2ecc71; color: white; text-decoration: none; padding: 10px 15px; border-radius: 8px; font-size: 14px; display: inline-flex; align-items: center; }
         .btn-logout { background: #e74c3c; color: white; }
-        
-        /* Мақолалар рўйхати */
         .posts-list { margin-top: 40px; border-top: 2px solid #eee; padding-top: 20px; }
         .post-item { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #3498db; }
-        .post-info h4 { margin: 0; color: #2c3e50; }
-        .post-info small { color: #7f8c8d; }
-        .post-actions { display: flex; gap: 5px; }
-        .btn-edit { background: #f1c40f; color: white; padding: 5px 10px; }
-        .btn-delete { background: #e74c3c; color: white; padding: 5px 10px; }
-
+        .file-label { font-weight: bold; display: block; margin-bottom: 5px; color: #34495e; text-align: left; }
+        .btn-edit { background: #f1c40f; color: white; margin-right: 5px; }
+        .btn-delete { background: #e74c3c; color: white; }
         .status { text-align: center; color: #27ae60; font-weight: bold; display: none; margin-top: 15px; }
-        .file-label { font-weight: bold; display: block; margin-bottom: 5px; color: #34495e; }
-
-        @media (max-width: 768px) {
-            body { align-items: flex-start; padding-top: 20px; }
-            .header-area { flex-direction: column; text-align: center; }
-        }
     </style>
 </head>
 <body>
 
-    <!-- 1. КИРИШ ОЙНАСИ -->
+    <!-- КИРИШ ОЙНАСИ -->
     <div id="login-section">
         <i class="fas fa-user-shield" style="font-size: 50px; color: #3498db; margin-bottom: 20px;"></i>
         <h2>Тизимга кириш</h2>
         <input type="email" id="adminEmail" placeholder="Email">
         <input type="password" id="adminPass" placeholder="Парол">
-        <button class="btn-primary" onclick="login()">КИРИШ</button>
-        <button><a href="index.html">Асосий сахифага</a></button>
+        <button class="btn-primary" id="loginBtn">КИРИШ</button>
     </div>
 
-    <!-- 2. АСОСИЙ ПАНЕЛ -->
+    <!-- АСОСИЙ ПАНЕЛ -->
     <div id="admin-main-content">
         <div class="header-area">
-            <h2 id="form-title"><i class="fas fa-edit"></i> Янги мақола</h2>
-            <div class="nav-buttons">
+            <h2 id="form-title"><i class="fas fa-plus-circle"></i> Янги мақола</h2>
+            <div>
                 <a href="index.html" class="btn-home"><i class="fas fa-home"></i> Асосий саҳифа</a>
-                <button class="btn-logout" onclick="logout()">Чиқиш</button>
+                <button class="btn-logout" id="logoutBtn">Чиқиш</button>
             </div>
         </div>
 
-        <!-- Форма -->
-        <input type="hidden" id="edit-id"> <!-- Таҳрирлаш учун ID сақлайди -->
+        <input type="hidden" id="edit-id">
         
-        <label class="file-label">Бўлимни танланг:</label>
+        <label class="file-label">Бўлим:</label>
         <select id="category">
-            <option value="index">Асосий саҳифа</option>
             <option value="news">Янгиликлар</option>
             <option value="hlp">Маслаҳатлар</option>
             <option value="med">Табобат</option>
@@ -79,23 +56,22 @@
             <option value="stories">Ҳикоялар</option>
         </select>
 
-        <input type="text" id="title" placeholder="Мақола сарлавҳаси...">
+        <input type="text" id="title" placeholder="Сарлавҳа">
         
         <label class="file-label">Расм (Компьютердан):</label>
         <input type="file" id="imageFile" accept="image/*">
         
-        <label class="file-label">Audio MP3 (Компьютердан):</label>
+        <label class="file-label">MP3 (Компьютердан):</label>
         <input type="file" id="audioFile" accept="audio/mpeg">
 
         <textarea id="content" rows="6" placeholder="Мақола матни..."></textarea>
-        <input type="text" id="video" placeholder="Видео код (Iframe ёки линк)">
+        <input type="text" id="video" placeholder="Видео линк (Iframe)">
 
-        <button id="publishBtn" class="btn-primary" onclick="handlePublish()">НАШР ҚИЛИШ</button>
-        <p id="statusMsg" class="status">✅ Бажарилди!</p>
+        <button id="publishBtn" class="btn-primary">НАШР ҚИЛИШ</button>
+        <p id="statusMsg" class="status">✅ Муваффақиятли бажарилди!</p>
 
-        <!-- МАҚОЛАЛАРНИ БОШҚАРИШ -->
         <div class="posts-list">
-            <h3><i class="fas fa-list"></i> Мақолаларни бошқариш</h3>
+            <h3><i class="fas fa-tasks"></i> Мақолаларни бошқариш</h3>
             <div id="postsContainer">Юкланмоқда...</div>
         </div>
     </div>
@@ -121,15 +97,19 @@
         const db = getDatabase(app);
         const storage = getStorage(app);
 
-        // --- AUTH ---
-        window.login = () => {
+        // КИРИШ
+        document.getElementById('loginBtn').addEventListener('click', () => {
             const email = document.getElementById('adminEmail').value;
             const pass = document.getElementById('adminPass').value;
             signInWithEmailAndPassword(auth, email, pass).catch(err => alert("Хато: " + err.message));
-        };
+        });
 
-        window.logout = () => signOut(auth).then(() => location.reload());
+        // ЧИҚИШ
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            signOut(auth).then(() => location.reload());
+        });
 
+        // ҲОЛАТНИ ТЕКШИРИШ
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('login-section').style.display = 'none';
@@ -141,107 +121,122 @@
             }
         });
 
-        // --- МАҚОЛАЛАРНИ ЮКЛАШ (РЎЙХАТ) ---
+        // РЎЙХАТНИ ЮКЛАШ
         function loadPosts() {
-            const container = document.getElementById('postsContainer');
             onValue(ref(db, 'all_posts'), (snapshot) => {
+                const container = document.getElementById('postsContainer');
                 container.innerHTML = "";
                 const data = snapshot.val();
-                if (!data) { container.innerHTML = "Мақолалар йўқ."; return; }
-                
-                Object.keys(data).reverse().forEach(id => {
-                    const post = data[id];
-                    container.innerHTML += `
-                        <div class="post-item">
-                            <div class="post-info">
-                                <h4>${post.title}</h4>
-                                <small>${post.category} | ${post.time}</small>
-                            </div>
-                            <div class="post-actions">
-                                <button class="btn-edit" onclick="editPost('${id}')"><i class="fas fa-edit"></i></button>
-                                <button class="btn-delete" onclick="deletePost('${id}')"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </div>
-                    `;
-                });
+                if (data) {
+                    Object.keys(data).reverse().forEach(id => {
+                        const post = data[id];
+                        const div = document.createElement('div');
+                        div.className = 'post-item';
+                        div.innerHTML = `
+                            <div><b>${post.title}</b><br><small>${post.category}</small></div>
+                            <div>
+                                <button class="btn-edit" data-id="${id}"><i class="fas fa-edit"></i></button>
+                                <button class="btn-delete" data-id="${id}"><i class="fas fa-trash"></i></button>
+                            </div>`;
+                        container.appendChild(div);
+                    });
+
+                    // Таҳрирлаш тугмалари учун ивент
+                    document.querySelectorAll('.btn-edit').forEach(btn => {
+                        btn.onclick = () => editPost(btn.getAttribute('data-id'));
+                    });
+
+                    // Ўчириш тугмалари учун ивент
+                    document.querySelectorAll('.btn-delete').forEach(btn => {
+                        btn.onclick = () => deletePost(btn.getAttribute('data-id'));
+                    });
+                } else {
+                    container.innerHTML = "Мақолалар йўқ.";
+                }
             });
         }
 
-        // --- НАШР ҚИЛИШ ЁКИ ЯНГИЛАШ ---
-        window.handlePublish = async () => {
+        // НАШР ҚИЛИШ ВА ФАЙЛ ЮКЛАШ
+        document.getElementById('publishBtn').onclick = async () => {
             const btn = document.getElementById('publishBtn');
             const editId = document.getElementById('edit-id').value;
-            
-            const title = document.getElementById('title').value;
-            const content = document.getElementById('content').value;
-            const category = document.getElementById('category').value;
-            const video = document.getElementById('video').value;
             const imgFile = document.getElementById('imageFile').files[0];
             const audFile = document.getElementById('audioFile').files[0];
 
-            if(!title || !content) { alert("Сарлавҳа ва матн шарт!"); return; }
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+
+            if (!title || !content) { alert("Сарлавҳа ва матнни ёзинг!"); return; }
 
             btn.disabled = true;
-            btn.innerHTML = "Жараён...";
+            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Юкланмоқда...";
 
             try {
-                let imageUrl = ""; 
-                let audioUrl = "";
+                let imgUrl = "";
+                let audUrl = "";
 
                 if (imgFile) {
-                    const r = stRef(storage, `images/${Date.now()}_${imgFile.name}`);
-                    await uploadBytes(r, imgFile);
-                    imageUrl = await getDownloadURL(r);
+                    const iRef = stRef(storage, 'images/' + Date.now() + "_" + imgFile.name);
+                    await uploadBytes(iRef, imgFile);
+                    imgUrl = await getDownloadURL(iRef);
                 }
                 if (audFile) {
-                    const r = stRef(storage, `audio/${Date.now()}_${audFile.name}`);
-                    await uploadBytes(r, audFile);
-                    audioUrl = await getDownloadURL(r);
+                    const aRef = stRef(storage, 'audio/' + Date.now() + "_" + audFile.name);
+                    await uploadBytes(aRef, audFile);
+                    audUrl = await getDownloadURL(aRef);
                 }
 
                 const postData = {
-                    title, content, category, video,
+                    title: title,
+                    content: content,
+                    category: document.getElementById('category').value,
+                    video: document.getElementById('video').value,
                     time: new Date().toLocaleString('uz-UZ')
                 };
-                if(imageUrl) postData.image = imageUrl;
-                if(audioUrl) postData.audio = audioUrl;
+
+                if (imgUrl) postData.image = imgUrl;
+                if (audUrl) postData.audio = audUrl;
 
                 if (editId) {
-                    // Таҳрирлаш
-                    await update(ref(db, `all_posts/${editId}`), postData);
+                    await update(ref(db, 'all_posts/' + editId), postData);
                 } else {
-                    // Янги қўшиш
                     await push(ref(db, 'all_posts'), postData);
                 }
 
                 document.getElementById('statusMsg').style.display = 'block';
                 setTimeout(() => location.reload(), 1000);
-            } catch (e) { alert(e.message); btn.disabled = false; }
-        };
-
-        // --- ЎЧИРИШ ---
-        window.deletePost = (id) => {
-            if(confirm("Ростдан ҳам ўчирмоқчимисиз?")) {
-                remove(ref(db, `all_posts/${id}`));
+            } catch (err) {
+                alert("Хатолик: " + err.message);
+                btn.disabled = false;
+                btn.innerHTML = "НАШР ҚИЛИШ";
             }
         };
 
-        // --- ТАҲРИРЛАШ УЧУН МАЪЛУМОТНИ ФОРМАГА ТЎЛДИРИШ ---
-        window.editPost = (id) => {
-            onValue(ref(db, `all_posts/${id}`), (snapshot) => {
-                const post = snapshot.val();
-                document.getElementById('edit-id').value = id;
-                document.getElementById('title').value = post.title;
-                document.getElementById('content').value = post.content;
-                document.getElementById('category').value = post.category;
-                document.getElementById('video').value = post.video || "";
-                
-                document.getElementById('form-title').innerHTML = "<i class='fas fa-sync'></i> Мақолани таҳрирлаш";
-                document.getElementById('publishBtn').innerHTML = "ЎЗГАРИШНИ САҚЛАШ";
-                window.scrollTo(0,0);
-            }, { onlyOnce: true });
-        };
+        // ЎЧИРИШ ФУНКЦИЯСИ
+        async function deletePost(id) {
+            if (confirm("Мақолани ўчиришга аминмисиз?")) {
+                try {
+                    await remove(ref(db, 'all_posts/' + id));
+                } catch (e) { alert(e.message); }
+            }
+        }
 
+        // ТАҲРИРЛАШ ФУНКЦИЯСИ
+        function editPost(id) {
+            onValue(ref(db, 'all_posts/' + id), (snapshot) => {
+                const post = snapshot.val();
+                if (post) {
+                    document.getElementById('edit-id').value = id;
+                    document.getElementById('title').value = post.title;
+                    document.getElementById('content').value = post.content;
+                    document.getElementById('category').value = post.category;
+                    document.getElementById('video').value = post.video || "";
+                    document.getElementById('form-title').innerHTML = "<i class='fas fa-sync'></i> Мақолани таҳрирлаш";
+                    document.getElementById('publishBtn').innerText = "ЎЗГАРИШНИ САҚЛАШ";
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }, { onlyOnce: true });
+        }
     </script>
 </body>
 </html>
