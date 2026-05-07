@@ -237,6 +237,76 @@
                 }
             }, { onlyOnce: true });
         }
+
+        window.handlePublish = async function() {
+    const btn = document.getElementById('publishBtn');
+    const title = document.getElementById('title').value;
+    const content = document.getElementById('content').value;
+
+    if (!title || !content) {
+        alert("Илтимос, сарлавҳа ва матнни тўлдиринг!");
+        return;
+    }
+
+    // Тугмани блоклаш
+    btn.disabled = true;
+    btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Жараён...";
+
+    try {
+        let imgUrl = "";
+        let audUrl = "";
+
+        const imgFile = document.getElementById('imageFile').files[0];
+        const audFile = document.getElementById('audioFile').files[0];
+
+        // 1. Расм юклаш
+        if (imgFile) {
+            try {
+                const imgRef = stRef(storage, 'images/' + Date.now() + "_" + imgFile.name);
+                const snapshot = await uploadBytes(imgRef, imgFile);
+                imgUrl = await getDownloadURL(snapshot.ref);
+            } catch (e) {
+                throw new Error("Расм юклашда хато: " + e.message);
+            }
+        }
+
+        // 2. Аудио юклаш
+        if (audFile) {
+            try {
+                const audRef = stRef(storage, 'audio/' + Date.now() + "_" + audFile.name);
+                const snapshot = await uploadBytes(audRef, audFile);
+                audUrl = await getDownloadURL(snapshot.ref);
+            } catch (e) {
+                throw new Error("Аудио юклашда хато: " + e.message);
+            }
+        }
+
+        // 3. Базага сақлаш
+        const postData = {
+            category: document.getElementById('category').value,
+            title: title,
+            content: content,
+            video: document.getElementById('video').value || "",
+            image: imgUrl,
+            audio: audUrl,
+            time: new Date().toLocaleString('uz-UZ')
+        };
+
+        const newPostRef = push(ref(db, 'all_posts'));
+        await set(newPostRef, postData);
+
+        alert("Муваффақиятли нашр қилинди!");
+        location.reload();
+
+    } catch (error) {
+        console.error("Тўлиқ хатолик:", error);
+        alert("Диққат хатолик: " + error.message);
+        
+        // Хато бўлса тугмани қайта тиклаш
+        btn.disabled = false;
+        btn.innerHTML = "НАШР ҚИЛИШ";
+    }
+};
     </script>
 </body>
 </html>
