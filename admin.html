@@ -154,60 +154,47 @@
         }
 
         // НАШР ҚИЛИШ
-        document.getElementById('publishBtn').onclick = async () => {
-            const btn = document.getElementById('publishBtn');
-            const editId = document.getElementById('edit-id').value;
-            const imgFile = document.getElementById('imageFile').files[0];
-            const audFile = document.getElementById('audioFile').files[0];
-            const title = document.getElementById('title').value;
-            const content = document.getElementById('content').value;
+        // НАШР ҚИЛИШ ТУГМАСИ (ЯНГИ ВА ТЕЗКОР ВАРИАНТ)
+document.getElementById('publishBtn').onclick = async () => {
+    const btn = document.getElementById('publishBtn');
+    const title = document.getElementById('title').value;
+    const content = document.getElementById('content').value;
 
-            if (!title || !content) { alert("Сарлавҳа ва матнни ёзинг!"); return; }
+    if (!title || !content) { 
+        alert("Сарлавҳа ва матнни тўлдиринг!"); 
+        return; 
+    }
 
-            btn.disabled = true;
-            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Юкланмоқда...";
+    // Тугмани фаоллаштирамиз
+    btn.disabled = true;
+    btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Юборилмоқда...";
 
-            try {
-                let imgUrl = "";
-                let audUrl = "";
-
-                // Storage ишлаши учун аввалги қадамдаги "Upgrade" муаммосини ҳал қилган бўлишингиз керак
-                if (imgFile) {
-                    const iRef = stRef(storage, 'images/' + Date.now() + "_" + imgFile.name);
-                    await uploadBytes(iRef, imgFile);
-                    imgUrl = await getDownloadURL(iRef);
-                }
-                if (audFile) {
-                    const aRef = stRef(storage, 'audio/' + Date.now() + "_" + audFile.name);
-                    await uploadBytes(aRef, audFile);
-                    audUrl = await getDownloadURL(aRef);
-                }
-
-                const postData = {
-                    title: title,
-                    content: content,
-                    category: document.getElementById('category').value,
-                    video: document.getElementById('video').value || "",
-                    time: new Date().toLocaleString('uz-UZ')
-                };
-
-                if (imgUrl) postData.image = imgUrl;
-                if (audUrl) postData.audio = audUrl;
-
-                if (editId) {
-                    await update(ref(db, 'all_posts/' + editId), postData);
-                } else {
-                    await push(ref(db, 'all_posts'), postData);
-                }
-
-                document.getElementById('statusMsg').style.display = 'block';
-                setTimeout(() => location.reload(), 1000);
-            } catch (err) {
-                alert("Хатолик: " + err.message);
-                btn.disabled = false;
-                btn.innerHTML = "НАШР ҚИЛИШ";
-            }
+    try {
+        // ДИҚҚАТ: Файл юклаш (Storage) қисмини олиб ташладик!
+        // Энди фақат базага (Database) маълумот ёзамиз
+        const postData = {
+            title: title,
+            content: content,
+            category: document.getElementById('category').value,
+            video: document.getElementById('video').value || "",
+            image: "", // Агар расм керак бўлса, интернетдаги линкини шу ерга ёзиш мумкин
+            time: new Date().toLocaleString('uz-UZ')
         };
+
+        const newPostRef = push(ref(db, 'all_posts'));
+        await set(newPostRef, postData);
+
+        document.getElementById('statusMsg').style.display = 'block';
+        alert("Муваффақиятли нашр қилинди!");
+        location.reload();
+
+    } catch (err) {
+        console.error(err);
+        alert("Хатолик: " + err.message);
+        btn.disabled = false;
+        btn.innerHTML = "НАШР ҚИЛИШ";
+    }
+};
 
         // ЎЧИРИШ
         async function deletePost(id) {
