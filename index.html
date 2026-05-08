@@ -1,272 +1,161 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <!-- ЭНГ МУҲИМ ТЕГ: Мобил қурилмаларда тўғри кўриниш учун -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Қидирув тизимлари учун асосий Meta теглар -->
-<meta name="description" content="Зоҳиджон Зокировнинг 'Уруш куни' (Day of War) номли сирли триллер ҳикояси. Патрик ва қора шарпалар ҳақидаги ҳаяжонли детектив.">
-<meta name="keywords" content="Зоҳиджон Зокиров, Уруш куни, Day of War, ҳикоялар, триллер, детектив, ўзбек адабиёти, Патрик, сирли воқеалар">
-<meta name="author" content="Zokhidjon Zokirov">
-
-    <title>Universal Portal - Сиз учун фойдали маълумотлар</title>
-
-    <!-- Google ва Yandex учун асосий теглар -->
-    <meta name="description" content="Наманган ва Ўзбекистон янгиликлари, фойдали маслаҳатлар, табобат ва кулинария портали.">
-    <meta name="keywords" content="янгиликлар, табобат, маслаҳатлар, латифалар, Наманган, Universal Portal">
-    <meta name="robots" content="index, follow">
-
-    <!-- Ижтимоий тармоқларда чиройли кўриниши учун -->
-    <meta property="og:title" content="Universal Portal - Сиз учун фойдали маълумотлар">
-    <meta property="og:description" content="Энг қизиқарли мақолалар ва янгиликлар бизнинг порталда.">
-    <meta property="og:image" content="https://сизнинг-сайтингиз.уз/logo.jpg">
-    <!-- Ижтимоий тармоқлар (Telegram, Facebook) учун кўриниш -->
-<meta property="og:title" content="Зоҳиджон Зокиров - Уруш куни (Ҳикоя)">
-<meta property="og:description" content="Бу ҳикояни албатта ўқинг. Триллер ва детектив ихлосмандлари учун.">
-<meta property="og:image" content="https://universalportal.netlify.app/images/urush-kuni-poster.jpg">
-<meta property="og:url" content="https://universalportal.netlify.app/stories.html">
-
-    <!-- Иконкалар учун FontAwesome -->
+    <title>Universal Portal - Асосий Саҳифа</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
     <style>
-        /* 1. Умумий созламалар */
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 0;
-            color: #333;
-            overflow-x: hidden; /* Мобилда ортиқча сурилишни олдини олади */
+        :root { --blue: #3498db; --dark: #2c3e50; --bg: #f8f9fa; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; }
+
+        header { background: #fff; padding: 15px; border-bottom: 2px solid var(--blue); text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        header h1 { margin: 0; color: var(--dark); font-size: 24px; letter-spacing: 1px; }
+
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 15px; }
+
+        /* КАРТОЧКАЛАР ТИЗИМИ (GRID) */
+        .news-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+            gap: 25px; 
         }
 
-        /* 2. Шапка (Header) */
-        header {
-            background: #fff;
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 1px solid #ddd;
+        .card { 
+            background: #fff; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            transition: 0.3s; 
+            display: flex; 
+            flex-direction: column;
+            border: 1px solid #eee;
+        }
+        .card:hover { transform: translateY(-7px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+
+        /* Расмни бир хил форматга солиш */
+        .card-img { 
+            width: 100%; 
+            height: 200px; 
+            object-fit: cover; 
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2c3e50;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-        }
-        .logo i { color: #3498db; }
-
-        /* 3. Эконом Меню (Navigation) */
-        nav {
-            background-color: #2c3e50;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        nav ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap; /* Мобилда сиғмаса пастга тушади */
-        }
-
-        nav li { position: relative; }
-
-        nav a {
-            display: block;
-            padding: 15px 18px;
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: 0.3s;
-            font-size: 15px;
-        }
-
-        nav a:hover { background-color: #34495e; }
-
-        /* 4. Dropdown (Очилувчи меню) */
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: white;
-            min-width: 200px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            border-radius: 0 0 5px 5px;
-            border-top: 3px solid #3498db;
-        }
-
-        .dropdown-content a {
-            color: #333;
-            padding: 12px 20px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .dropdown-content a:hover { background-color: #f1f1f1; color: #3498db; }
-        .dropdown:hover .dropdown-content { display: block; }
-
-        /* 5. Асосий Контейнер */
-        .main-container {
-            max-width: 1150px;
-            margin: 20px auto;
-            display: flex;
-            gap: 20px;
-            padding: 0 15px;
-        }
-
-        .main-content { flex: 7; width: 100%; }
-        .sidebar { flex: 3; width: 100%; }
-
-        /* 6. Мақолалар Карточкаси */
-        .post-card {
-            background: white;
-            margin-bottom: 25px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        .post-card img {
-            width: 100%;
-            height: auto;
-            max-height: 350px;
-            object-fit: cover;
-        }
-
-        .post-info { padding: 20px; }
-        .post-info h2 { margin: 0 0 12px; font-size: 22px; color: #2c3e50; line-height: 1.3; }
-        .post-info p { line-height: 1.6; color: #555; font-size: 16px; }
-
-        .btn-more {
-            display: inline-block;
-            padding: 10px 20px;
-            background: #3498db;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        /* 7. Ўнг томон (Силлкалар) */
-        .widget {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        .widget h3 { border-left: 4px solid #3498db; padding-left: 10px; margin-top: 0; font-size: 18px; }
+        .card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
         
-        .link-list { list-style: none; padding: 0; }
-        .link-list li { padding: 12px 0; border-bottom: 1px solid #f5f5f5; }
-        .link-list a { text-decoration: none; color: #444; transition: 0.2s; font-size: 15px; display: block; }
-        .link-list a:hover { color: #3498db; padding-left: 5px; }
-
-        /* 📱 МОБИЛ ҚУРИЛМАЛАР УЧУН (Responsive) */
-        @media (max-width: 850px) {
-            .main-container { flex-direction: column; margin-top: 10px; }
-            
-            nav a { padding: 12px 10px; font-size: 14px; text-align: center; }
-            nav ul { justify-content: space-around; }
-            
-            .dropdown-content { position: static; width: 100%; box-shadow: none; display: none; background: #34495e; }
-            .dropdown-content a { color: white; padding-left: 30px; }
-            .dropdown:hover .dropdown-content { display: block; }
-
-            .post-info h2 { font-size: 19px; }
-            
-            /* Силлкалар пастга тушганда ҳам чиройли кўриниши учун */
-            .sidebar { order: 2; }
-            .main-content { order: 1; }
+        .card-tag { 
+            font-size: 11px; 
+            background: var(--blue); 
+            color: #fff; 
+            padding: 3px 10px; 
+            border-radius: 5px; 
+            text-transform: uppercase; 
+            width: fit-content;
         }
-        <!-- Google ва Yandex учун "Мақола/Ҳикоя" форматидаги махсус код (JSON-LD) -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": "Уруш куни (Day of War) - Зоҳиджон Зокиров",
-  "image": "https://universalportal.netlify.app/images/urush-kuni-poster.jpg", 
-  "author": {
-    "@type": "Person",
-    "name": "Зоҳиджон Зокиров"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "Universal Portal",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://universalportal.netlify.app/logo.png"
-    }
-  },
-  "description": "Патрик ва унинг атрофидаги сирли воқеалар ҳақидаги ўткир сюжети триллер ҳикоя."
-}
+
+        .card-title { 
+            font-size: 19px; 
+            color: var(--dark); 
+            margin: 12px 0; 
+            font-weight: 700;
+            line-height: 1.4;
+            /* Сарлавҳани 2 қатор билан чеклаш */
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+
+        .card-desc { 
+            font-size: 14px; 
+            color: #666; 
+            line-height: 1.6; 
+            margin-bottom: 15px;
+            /* Матнни 3 қатор билан чеклаш */
+            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+        }
+
+        .read-more { 
+            margin-top: auto; 
+            color: var(--blue); 
+            text-decoration: none; 
+            font-weight: 600; 
+            font-size: 14px; 
+            display: flex; 
+            align-items: center; 
+            gap: 5px; 
+        }
+        .read-more:hover { text-decoration: underline; }
+
+        .card-footer { 
+            padding: 15px 20px; 
+            background: #fafafa; 
+            border-top: 1px solid #f0f0f0; 
+            font-size: 12px; 
+            color: #999; 
+            display: flex; 
+            justify-content: space-between; 
+        }
+
+        @media (max-width: 600px) { .news-grid { grid-template-columns: 1fr; } }
+        header img{
+            border-radius: 150px;
+            border-color: red;
+            border-style: groove;
+            box-shadow: 3px 5px 8px;
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <a href="index.html" class="logo">
-            <i class="fas fa-globe"></i> UNIVERSAL PORTAL
-        </a>
-    </header>
+<header>
 
-    <nav>
-        <ul>
-            <li><a href="index.html">Асосий саҳифа</a></li>
-            <li class="dropdown">
-                <a href="#">Бўлимлар <i class="fas fa-chevron-down" style="font-size: 10px;"></i></a>
-                <div class="dropdown-content">
-                    <a href="hlp.html">Фойдали маслаҳатлар</a>
-                    <a href="cock.html">Кулинария</a>
-                    <a href="med.html">Табобат</a>
-                    <a href="yumor.html">Ҳангомалар</a>
-                    <a href="stories.html">Хикоялар</a>
-                    <a href="admin.html">Шахсий кабинет</a>
-                </div>
-            </li>
-            <li><a href="news.html">Янгиликлар</a></li>
-            <li><a href="contact.html">Алоқа</a></li>
-        </ul>
-    </nav>
+    <h1>UNIVERSAL PORTAL</h1>
+    <img src="logo.jpg" alt="logo" width="150" height="150">
+</header>
 
-    <div class="main-container">
+<div class="container">
+    <div class="news-grid" id="newsWrapper">
+        </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCO079n6tlKKTXi1LjtSB1t0ddsxDMQUW4",
+        databaseURL: "https://universal-portal-108b7-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "universal-portal-108b7"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    onValue(ref(db, 'all_posts'), (snapshot) => {
+        const wrapper = document.getElementById('newsWrapper');
+        wrapper.innerHTML = "";
+        const data = snapshot.val();
         
-        <main class="main-content" id="post-display-area">
-            <!-- Бу ерга мақолалар Firebase-дан чиқади -->
-            
-            <!-- Намуна учун статик мақола -->
-            <article class="post-card">
-                <img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=800&q=80" alt="Боғбонлик">
-                <div class="post-info">
-                    <h2>Боғбонлик сирлари: Дарахтларни тўғри парваришлаш</h2>
-                    <p>Баҳор ойларида боғдаги дарахтларга қандай қараш керак? Мутахассис маслаҳатлари...</p>
-                    <a href="#" class="btn-more">Батафсил</a>
-                </div>
-            </article>
-        </main>
-
-        <aside class="sidebar">
-            <div class="widget">
-                <h3>Сўнгги хабарлар</h3>
-                <ul class="link-list" id="sidebar-links">
-                    <li><a href="#">➔ Янги китоб тақдимоти яқинлашмоқда</a></li>
-                    <li><a href="#">➔ Саломатлик учун 5 та олтин қоида</a></li>
-                    <li><a href="#">➔ Наманган гуллар фестивали таассуротлари</a></li>
-                </ul>
-            </div>
-        </aside>
-
-    </div>
-
-    <!-- Firebase билан боғловчи файл -->
-    <script type="module" src="bridge.js"></script>
+        if (data) {
+            Object.keys(data).reverse().forEach(id => {
+                const p = data[id];
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <img src="${p.image || 'https://via.placeholder.com/400x200?text=No+Image'}" class="card-img">
+                    <div class="card-body">
+                        <span class="card-tag">${p.category}</span>
+                        <h2 class="card-title">${p.title}</h2>
+                        <p class="card-desc">${p.content}</p>
+                        <a href="news.html?id=${id}" class="read-more">Батафсил ўқиш <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="card-footer">
+                        <span><i class="far fa-calendar"></i> ${p.time}</span>
+                        <span><i class="far fa-eye"></i> Кўриш</span>
+                    </div>
+                `;
+                wrapper.appendChild(card);
+            });
+        }
+    });
+</script>
 </body>
 </html>
