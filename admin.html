@@ -18,8 +18,8 @@
         .posts-list { margin-top: 40px; border-top: 2px solid #eee; padding-top: 20px; }
         .post-item { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #3498db; }
         .file-label { font-weight: bold; display: block; margin-bottom: 5px; color: #34495e; text-align: left; }
-        .btn-edit { background: #f1c40f; color: white; margin-right: 5px; }
-        .btn-delete { background: #e74c3c; color: white; }
+        .btn-edit-action { background: #f1c40f; color: white; margin-right: 5px; padding: 8px; border-radius: 5px; }
+        .btn-delete-action { background: #e74c3c; color: white; padding: 8px; border-radius: 5px; }
         .status { text-align: center; color: #27ae60; font-weight: bold; display: none; margin-top: 15px; }
     </style>
 </head>
@@ -37,7 +37,7 @@
         <div class="header-area">
             <h2 id="form-title"><i class="fas fa-plus-circle"></i> Янги мақола</h2>
             <div>
-                <a class='btn-home' href='/'><i class="fas fa-home"></i> Асосий саҳифа</a>
+                <a class='btn-home' href='index.html'><i class="fas fa-home"></i> Асосий саҳифа</a>
                 <button class="btn-logout" id="logoutBtn">Чиқиш</button>
             </div>
         </div>
@@ -46,6 +46,7 @@
         
         <label class="file-label">Бўлим:</label>
         <select id="category">
+            <option value="home">Асосий сахифа</option>
             <option value="news">Янгиликлар</option>
             <option value="hlp">Маслаҳатлар</option>
             <option value="med">Табобат</option>
@@ -56,11 +57,8 @@
 
         <input type="text" id="title" placeholder="Сарлавҳа">
         
-        <label class="file-label">Расм (Компьютердан):</label>
-        <input type="file" id="imageFile" accept="image/*">
-        
-        <label class="file-label">MP3 (Компьютердан):</label>
-        <input type="file" id="audioFile" accept="audio/mpeg">
+        <label class="file-label">Расм линки (Интернетдан):</label>
+        <input type="text" id="imageUrl" placeholder="Намуна: https://sayt.uz/rasm.jpg">
 
         <textarea id="content" rows="6" placeholder="Мақола матни..."></textarea>
         <input type="text" id="video" placeholder="Видео линк (Iframe)">
@@ -78,35 +76,30 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getDatabase, ref, push, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-        import { getStorage, ref as stRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCO079n6tlKKTXi1LjtSB1t0ddsxDMQUW4",
             authDomain: "universal-portal-108b7.firebaseapp.com",
             databaseURL: "https://universal-portal-108b7-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "universal-portal-108b7",
-            storageBucket: "universal-portal-108b7.firebasestorage.app",
-            messagingSenderId: "183555008981",
-            appId: "1:183555008981:web:b38e59baef1d6861b6b55c"
+            projectId: "universal-portal-108b7"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
-        const storage = getStorage(app);
 
         // КИРИШ
-        document.getElementById('loginBtn').addEventListener('click', () => {
+        document.getElementById('loginBtn').onclick = () => {
             const email = document.getElementById('adminEmail').value;
             const pass = document.getElementById('adminPass').value;
             if(!email || !pass) return alert("Маълумотни тўлдиринг");
             signInWithEmailAndPassword(auth, email, pass).catch(err => alert("Хато: " + err.message));
-        });
+        };
 
         // ЧИҚИШ
-        document.getElementById('logoutBtn').addEventListener('click', () => {
+        document.getElementById('logoutBtn').onclick = () => {
             signOut(auth).then(() => location.reload());
-        });
+        };
 
         // ҲОЛАТНИ ТЕКШИРИШ
         onAuthStateChanged(auth, (user) => {
@@ -114,11 +107,46 @@
                 document.getElementById('login-section').style.display = 'none';
                 document.getElementById('admin-main-content').style.display = 'block';
                 loadPosts();
-            } else {
-                document.getElementById('login-section').style.display = 'block';
-                document.getElementById('admin-main-content').style.display = 'none';
             }
         });
+
+        // НАШР ҚИЛИШ
+        document.getElementById('publishBtn').onclick = async () => {
+            const btn = document.getElementById('publishBtn');
+            const editId = document.getElementById('edit-id').value;
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            const img = document.getElementById('imageUrl').value;
+
+            if (!title || !content) { alert("Сарлавҳа ва матнни тўлдиринг!"); return; }
+
+            btn.disabled = true;
+            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Юборилмоқда...";
+
+            try {
+                const postData = {
+                    title: title,
+                    content: content,
+                    category: document.getElementById('category').value,
+                    video: document.getElementById('video').value || "",
+                    image: img || "",
+                    time: new Date().toLocaleString('uz-UZ')
+                };
+
+                if (editId) {
+                    await update(ref(db, 'all_posts/' + editId), postData);
+                    alert("Мақола янгиланди!");
+                } else {
+                    await push(ref(db, 'all_posts'), postData);
+                    alert("Мақола нашр қилинди!");
+                }
+                location.reload();
+            } catch (err) {
+                alert("Хатолик: " + err.message);
+                btn.disabled = false;
+                btn.innerHTML = "НАШР ҚИЛИШ";
+            }
+        };
 
         // РЎЙХАТНИ ЮКЛАШ
         function loadPosts() {
@@ -134,13 +162,12 @@
                         div.innerHTML = `
                             <div><b>${post.title}</b><br><small>${post.category}</small></div>
                             <div>
-                                <button class="btn-edit-action" data-id="${id}" style="background:#f1c40f; color:white; padding:8px; border-radius:5px; border:none; cursor:pointer;"><i class="fas fa-edit"></i></button>
-                                <button class="btn-delete-action" data-id="${id}" style="background:#e74c3c; color:white; padding:8px; border-radius:5px; border:none; cursor:pointer;"><i class="fas fa-trash"></i></button>
+                                <button class="btn-edit-action" data-id="${id}"><i class="fas fa-edit"></i></button>
+                                <button class="btn-delete-action" data-id="${id}"><i class="fas fa-trash"></i></button>
                             </div>`;
                         container.appendChild(div);
                     });
 
-                    // Ивентларни қайта боғлаш
                     document.querySelectorAll('.btn-edit-action').forEach(btn => {
                         btn.onclick = () => editPost(btn.getAttribute('data-id'));
                     });
@@ -153,59 +180,12 @@
             });
         }
 
-        // НАШР ҚИЛИШ
-        // НАШР ҚИЛИШ ТУГМАСИ (ЯНГИ ВА ТЕЗКОР ВАРИАНТ)
-document.getElementById('publishBtn').onclick = async () => {
-    const btn = document.getElementById('publishBtn');
-    const title = document.getElementById('title').value;
-    const content = document.getElementById('content').value;
-
-    if (!title || !content) { 
-        alert("Сарлавҳа ва матнни тўлдиринг!"); 
-        return; 
-    }
-
-    // Тугмани фаоллаштирамиз
-    btn.disabled = true;
-    btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Юборилмоқда...";
-
-    try {
-        // ДИҚҚАТ: Файл юклаш (Storage) қисмини олиб ташладик!
-        // Энди фақат базага (Database) маълумот ёзамиз
-        const postData = {
-            title: title,
-            content: content,
-            category: document.getElementById('category').value,
-            video: document.getElementById('video').value || "",
-            image: "", // Агар расм керак бўлса, интернетдаги линкини шу ерга ёзиш мумкин
-            time: new Date().toLocaleString('uz-UZ')
-        };
-
-        const newPostRef = push(ref(db, 'all_posts'));
-        await set(newPostRef, postData);
-
-        document.getElementById('statusMsg').style.display = 'block';
-        alert("Муваффақиятли нашр қилинди!");
-        location.reload();
-
-    } catch (err) {
-        console.error(err);
-        alert("Хатолик: " + err.message);
-        btn.disabled = false;
-        btn.innerHTML = "НАШР ҚИЛИШ";
-    }
-};
-
-        // ЎЧИРИШ
         async function deletePost(id) {
-            if (confirm("Мақолани ўчиришга аминмисиз?")) {
-                try {
-                    await remove(ref(db, 'all_posts/' + id));
-                } catch (e) { alert(e.message); }
+            if (confirm("Ўчирилсинми?")) {
+                await remove(ref(db, 'all_posts/' + id));
             }
         }
 
-        // ТАҲРИРЛАШ
         function editPost(id) {
             onValue(ref(db, 'all_posts/' + id), (snapshot) => {
                 const post = snapshot.val();
@@ -214,6 +194,7 @@ document.getElementById('publishBtn').onclick = async () => {
                     document.getElementById('title').value = post.title;
                     document.getElementById('content').value = post.content;
                     document.getElementById('category').value = post.category;
+                    document.getElementById('imageUrl').value = post.image || "";
                     document.getElementById('video').value = post.video || "";
                     document.getElementById('form-title').innerHTML = "<i class='fas fa-sync'></i> Мақолани таҳрирлаш";
                     document.getElementById('publishBtn').innerText = "ЎЗГАРИШНИ САҚЛАШ";
