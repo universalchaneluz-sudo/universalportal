@@ -8,45 +8,72 @@
     <style>
         :root { --blue: #3498db; --dark: #2c3e50; --bg: #f8f9fa; --orange: #ff9800; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; }
-        header { background: #fff; padding: 20px; border-bottom: 2px solid var(--blue); text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: relative; }
+
+        /* Тест режими баннери */
+        .test-banner { background: var(--orange); color: white; text-align: center; padding: 10px; font-weight: bold; }
+
+        header { background: #fff; padding: 20px; border-bottom: 2px solid var(--blue); text-align: center; position: relative; }
         header h1 { margin: 0 0 15px 0; color: var(--dark); font-size: 28px; }
-        header img { border-radius: 50%; border: 3px groove red; object-fit: cover; }
+        header img { border-radius: 50%; border: 3px groove red; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         
-        .menu-bar { background: white; padding: 15px; text-align: center; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; }
-        .menu-btn { background: #fff; border: 1px solid var(--blue); color: var(--blue); padding: 8px 18px; border-radius: 20px; cursor: pointer; margin: 5px; transition: 0.3s; }
+        /* Шахсий кабинет тугмаси (Ўнг юқорида) */
+        .admin-icon { position: absolute; top: 20px; right: 20px; font-size: 30px; color: var(--blue); text-decoration: none; transition: 0.3s; }
+        .admin-icon:hover { color: var(--dark); }
+
+        .search-container { max-width: 500px; margin: 15px auto; display: flex; gap: 5px; }
+        .search-container input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+        .search-container button { padding: 10px 20px; background: var(--blue); color: white; border: none; border-radius: 8px; cursor: pointer; }
+
+        /* Реклама блоки */
+        #adBlock { max-width: 1200px; margin: 15px auto; display: none; text-align: center; }
+        #adBlock img { width: 100%; max-height: 150px; object-fit: cover; border-radius: 10px; }
+
+        .menu-bar { background: white; padding: 15px; text-align: center; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; overflow-x: auto; white-space: nowrap; }
+        .menu-btn { background: #fff; border: 1px solid var(--blue); color: var(--blue); padding: 8px 18px; border-radius: 20px; cursor: pointer; margin: 5px; font-weight: 500; }
         .menu-btn.active { background: var(--blue); color: white; }
 
-        .container { max-width: 1200px; margin: 30px auto; padding: 0 15px; }
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
 
-        .card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; border: 1px solid #eee; }
+        .card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; border: 1px solid #eee; }
+        .card:hover { transform: translateY(-5px); }
         .card-img { width: 100%; height: 200px; object-fit: cover; }
-        .card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
-        .card-tag { font-size: 11px; background: var(--blue); color: #fff; padding: 3px 10px; border-radius: 5px; text-transform: uppercase; width: fit-content; }
-        .card-title { font-size: 19px; color: var(--dark); margin: 12px 0; font-weight: 700; }
-        
-        /* Видео контейнери */
-        .video-wrapper { position: relative; width: 100%; margin: 10px 0; background: #000; border-radius: 8px; overflow: hidden; }
-        .video-wrapper iframe { width: 100%; aspect-ratio: 16/9; border: none; display: block; }
-
-        .card-desc { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 15px; }
-        .read-more { color: var(--blue); text-decoration: none; font-weight: 600; margin-top: auto; }
+        .card-body { padding: 15px; }
+        .card-tag { font-size: 11px; background: var(--blue); color: white; padding: 3px 8px; border-radius: 5px; }
+        .card-title { font-size: 18px; margin: 10px 0; color: var(--dark); font-weight: bold; }
+        .read-more { color: var(--blue); text-decoration: none; font-weight: bold; font-size: 14px; }
     </style>
 </head>
 <body>
 
+<div class="test-banner">📢 Ушбу сайт тест режимида ишламоқда</div>
+
 <header>
+    <a href="admin.html" class="admin-icon" title="Шахсий кабинет"><i class="fas fa-user-circle"></i></a>
     <h1>UNIVERSAL PORTAL</h1>
-    <img src="logo.jpg" alt="logo" width="120" height="120">
+    <img src="logo.jpg" alt="logo" width="100" height="100">
+    
+    <div class="search-container">
+        <input type="text" placeholder="Сайтдан қидириш...">
+        <button>Қидириш</button>
+    </div>
 </header>
+
+<div id="adBlock">
+    <a id="adLink" href="#" target="_blank">
+        <img id="adImg" src="" alt="Реклама">
+    </a>
+</div>
 
 <nav class="menu-bar">
     <button class="menu-btn active" onclick="filterCat('all')">Ҳаммаси</button>
-    <button class="menu-btn" onclick="filterCat('news')">Янгиликлар</button>
-    <button class="menu-btn" onclick="filterCat('med')">Табобат</button>
-    <button class="menu-btn" onclick="filterCat('cinema')">Кинотеатр</button>
-    <button class="menu-btn" onclick="filterCat('clips')">Клиплар</button>
-    <button class="menu-btn" onclick="filterCat('stories')">Ҳикоялар</button>
+    <button class="menu-btn" onclick="filterCat('Янгиликлар')">Янгиликлар</button>
+    <button class="menu-btn" onclick="filterCat('Табобат')">Табобат</button>
+    <button class="menu-btn" onclick="filterCat('Кинотеатр')">Кинотеатр</button>
+    <button class="menu-btn" onclick="filterCat('Клиплар')">Клиплар</button>
+    <button class="menu-btn" onclick="filterCat('Ҳикоялар')">Ҳикоялар</button>
+    <button class="menu-btn" onclick="filterCat('Ҳангомалар')">Ҳангомалар</button>
+    <button class="menu-btn" onclick="filterCat('Кулинария')">Кулинария</button>
 </nav>
 
 <div class="container">
@@ -66,8 +93,19 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    let allPosts = {};
+    // Рекламани юклаш
+    onValue(ref(db, 'ads'), (s) => {
+        const ad = s.val();
+        if(ad && ad.img) {
+            document.getElementById('adBlock').style.display = 'block';
+            document.getElementById('adImg').src = ad.img;
+            document.getElementById('adLink').href = ad.link || "#";
+        } else {
+            document.getElementById('adBlock').style.display = 'none';
+        }
+    });
 
+    let allPosts = {};
     onValue(ref(db, 'all_posts'), (snapshot) => {
         allPosts = snapshot.val() || {};
         renderPosts('all');
@@ -82,23 +120,16 @@
     function renderPosts(category) {
         const wrapper = document.getElementById('newsWrapper');
         wrapper.innerHTML = "";
-        
         Object.keys(allPosts).reverse().forEach(id => {
             const p = allPosts[id];
             if (category === 'all' || p.category === category) {
                 const card = document.createElement('div');
                 card.className = 'card';
-                
-                const imgPart = p.image ? `<img src="${p.image}" class="card-img">` : '';
-                const videoPart = p.video ? `<div class="video-wrapper">${p.video}</div>` : '';
-
                 card.innerHTML = `
-                    ${imgPart}
+                    ${p.image ? `<img src="${p.image}" class="card-img">` : ''}
                     <div class="card-body">
                         <span class="card-tag">${p.category}</span>
                         <h2 class="card-title">${p.title}</h2>
-                        ${videoPart}
-                        <p class="card-desc">${p.content ? p.content.substring(0, 100) : ''}...</p>
                         <a href="post.html?id=${id}" class="read-more">Батафсил...</a>
                     </div>
                 `;
