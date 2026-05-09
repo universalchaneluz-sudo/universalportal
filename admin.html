@@ -10,16 +10,17 @@
         #login-section { height: 90vh; display: flex; justify-content: center; align-items: center; flex-direction: column; }
         .login-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 320px; text-align: center; }
         .admin-main { max-width: 800px; margin: 0 auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: none; }
-        
         .profile-card { background: #3498db; color: white; padding: 20px; border-radius: 15px; display: flex; align-items: center; margin-bottom: 20px; }
         .btn-row { display: flex; gap: 10px; margin-bottom: 20px; }
-        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; text-decoration: none; display: inline-block; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; text-decoration: none; display: inline-block; transition: 0.3s; text-align: center; }
+        .btn:active { transform: scale(0.95); }
         .btn-home { background: #2ecc71; } .btn-update { background: #3498db; } .btn-logout { background: #e74c3c; } .btn-save { background: #f39c12; } .btn-delete { background: #7f8c8d; }
-
         .section-box { border: 2px dashed #ddd; padding: 15px; border-radius: 12px; margin-bottom: 20px; position: relative; }
-        .section-title { font-weight: bold; margin-bottom: 10px; display: block; }
-        
-        input, select, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .section-title { font-weight: bold; margin-bottom: 10px; display: block; color: #444; }
+        input, select, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        .file-upload-group { background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #eee; }
+        .status-msg { font-size: 12px; color: #27ae60; margin-top: -5px; margin-bottom: 10px; display: none; }
+        .video-hint { font-size: 11px; color: #7f8c8d; margin-top: -8px; margin-bottom: 10px; display: block; }
     </style>
 </head>
 <body>
@@ -32,7 +33,7 @@
         <input type="password" id="pass" placeholder="Парол">
         <button class="btn btn-update" style="width:100%" id="loginBtn">КИРИШ</button>
         <br><br>
-        <a href="index.html" style="color:#666; text-decoration:none;">Асосий саҳифага қайтиш</a>
+        <a href='/' style='color:#666; text-decoration:none;'>Асосий саҳифага қайтиш</a>
     </div>
 </div>
 
@@ -46,11 +47,12 @@
     </div>
 
     <div class="btn-row">
-        <a href="index.html" class="btn btn-home"><i class="fas fa-home"></i> Саҳифага қайтиш</a>
+        <a class='btn btn-home' href='/'><i class="fas fa-home"></i> Саҳифага қайтиш</a>
         <button class="btn btn-update" onclick="location.reload()"><i class="fas fa-sync"></i> Янгилаш</button>
         <button class="btn btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Чиқиш</button>
     </div>
 
+    <!-- Тезкор эълон -->
     <div class="section-box" style="border-color: #ff9800;">
         <span class="section-title"><i class="fas fa-bullhorn"></i> Тезкор эълон (Матнли):</span>
         <input type="text" id="noticeText" placeholder="Муҳим хабарни ёзинг...">
@@ -60,9 +62,15 @@
         </div>
     </div>
 
+    <!-- Реклама блоки -->
     <div class="section-box" style="border-color: #2ecc71;">
-        <span class="section-title"><i class="fas fa-ad"></i> Реклама ва Эълонлар блоки (Расмли):</span>
-        <input type="text" id="adImgUrl" placeholder="Реклама расми (URL)">
+        <span class="section-title"><i class="fas fa-ad"></i> Реклама ва Эълонлар (Расмли):</span>
+        <div class="file-upload-group">
+            <label style="font-size:13px">Компьютердан расм юклаш:</label>
+            <input type="file" id="adFile" accept="image/*">
+            <div id="adStatus" class="status-msg">Юкланмоқда...</div>
+        </div>
+        <input type="text" id="adImgUrl" placeholder="Расм URL">
         <input type="text" id="adLinkUrl" placeholder="Реклама линки (https://...)">
         <div style="display:flex; gap:10px">
             <button class="btn btn-home" id="saveAd">РЕКЛАМАНИ ЖОЙЛАШ</button>
@@ -70,40 +78,63 @@
         </div>
     </div>
 
-    <h3>Янги мақола қўшиш</h3>
-    <select id="cat">
-        <option value="Янгиликлар">Янгиликлар</option>
-        <option value="Табобат">Табобат</option>
-        <option value="Кинотеатр">Кинотеатр</option>
-        <option value="Клиплар">Мусиқий клиплар</option>
-        <option value="Ҳикоялар">Ҳикоялар</option>
-        <option value="Ҳангомалар">Ҳангомалар</option>
-        <option value="Кулинария">Кулинария</option>
-    </select>
-    <input type="text" id="title" placeholder="Сарлавҳа">
-    <input type="text" id="img" placeholder="Асосий расм URL">
-    <textarea id="txt" rows="5" placeholder="Мақола матни..."></textarea>
-    <button class="btn btn-update" style="width:100%" id="pubBtn">НАШР ҚИЛИШ</button>
+    <!-- Мақола қўшиш -->
+    <div class="section-box" style="border-color: #3498db; border-style: solid;">
+        <span class="section-title"><i class="fas fa-edit"></i> Янги мақола / Видео нашр қилиш</span>
+        
+        <select id="cat">
+            <option value="Янгиликлар">Янгиликлар</option>
+            <option value="Табобат">Табобат</option>
+            <option value="Кинотеатр">Кинотеатр</option>
+            <option value="Клиплар">Мусиқий клиплар</option>
+            <option value="Ҳикоялар">Ҳикоялар</option>
+            <option value="Ҳангомалар">Ҳангомалар</option>
+            <option value="Кулинария">Кулинария</option>
+        </select>
+
+        <input type="text" id="title" placeholder="Сарлавҳа">
+        
+        <!-- Расм юклаш -->
+        <div class="file-upload-group">
+            <label style="font-size:13px">Асосий расмни юклаш:</label>
+            <input type="file" id="postFile" accept="image/*">
+            <div id="postStatus" class="status-msg">Юкланмоқда...</div>
+        </div>
+        <input type="text" id="img" placeholder="Расм URL">
+
+        <!-- Видео Iframe -->
+        <span class="section-title" style="font-size:13px; margin-top:10px;"><i class="fas fa-video"></i> Видео код (Iframe):</span>
+        <textarea id="videoIframe" rows="3" placeholder='<iframe src="..."></iframe>'></textarea>
+        <small class="video-hint">YouTube, Rutube ёки Facebook "Embed" кодини шу ерга қўйинг.</small>
+
+        <textarea id="txt" rows="8" placeholder="Мақола матни..."></textarea>
+        
+        <button class="btn btn-update" style="width:100%; font-size:16px; padding:15px;" id="pubBtn">НАШР ҚИЛИШ</button>
+    </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, push, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCO079n6tlKKTXi1LjtSB1t0ddsxDMQUW4",
+        authDomain: "universal-portal-108b7.firebaseapp.com",
         databaseURL: "https://universal-portal-108b7-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "universal-portal-108b7"
+        projectId: "universal-portal-108b7",
+        storageBucket: "universal-portal-108b7.appspot.com"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
+    const storage = getStorage(app);
 
     // Кириш
     document.getElementById('loginBtn').onclick = () => {
-        signInWithEmailAndPassword(auth, email.value, pass.value).catch(e => alert("Хато!"));
+        signInWithEmailAndPassword(auth, email.value, pass.value).catch(e => alert("Хато: " + e.message));
     };
 
     onAuthStateChanged(auth, u => {
@@ -113,28 +144,60 @@
 
     document.getElementById('logoutBtn').onclick = () => signOut(auth);
 
-    // Эълонни бошқариш
+    // РАСМ ЮКЛАШ (Storage)
+    async function handleUpload(file, inputTarget, statusTarget) {
+        if(!file) return;
+        const status = document.getElementById(statusTarget);
+        status.style.display = "block";
+        status.innerText = "Юкланмоқда...";
+        
+        const storageRef = sRef(storage, 'uploads/' + Date.now() + "_" + file.name);
+        try {
+            const snapshot = await uploadBytes(storageRef, file);
+            const url = await getDownloadURL(snapshot.ref);
+            document.getElementById(inputTarget).value = url;
+            status.innerText = "✅ Юкланди!";
+        } catch (e) {
+            alert("Хатолик юз берди");
+            status.style.display = "none";
+        }
+    }
+
+    document.getElementById('adFile').onchange = (e) => handleUpload(e.target.files[0], 'adImgUrl', 'adStatus');
+    document.getElementById('postFile').onchange = (e) => handleUpload(e.target.files[0], 'img', 'postStatus');
+
+    // Эълонлар
     document.getElementById('saveNotice').onclick = () => set(ref(db, 'site_notice'), {text: noticeText.value});
     document.getElementById('delNotice').onclick = () => remove(ref(db, 'site_notice'));
 
-    // Рекламани бошқариш
+    // Реклама
     document.getElementById('saveAd').onclick = () => set(ref(db, 'ads'), {img: adImgUrl.value, link: adLinkUrl.value});
     document.getElementById('delAd').onclick = () => remove(ref(db, 'ads'));
 
-    // Мақола нашр қилиш
+    // МАҚОЛА ВА ВИДЕО НАШР ҚИЛИШ
     document.getElementById('pubBtn').onclick = () => {
         const data = {
             title: title.value,
             image: img.value,
+            video: videoIframe.value, // Iframe код шу ерда сақланади
             category: cat.value,
             content: txt.value,
-            time: new Date().toLocaleString()
+            time: new Date().toLocaleString('uz-UZ')
         };
+
+        if(!data.title) {
+            alert("Сарлавҳа киритинг!");
+            return;
+        }
+
         push(ref(db, 'all_posts'), data).then(() => {
-            alert("Нашр қилинди!");
-            title.value = ""; img.value = ""; txt.value = "";
-        });
+            alert("Муваффақиятли нашр қилинди!");
+            // Тозалаш
+            title.value = ""; img.value = ""; txt.value = ""; videoIframe.value = "";
+            document.getElementById('postStatus').style.display = "none";
+        }).catch(e => alert("Базага ёзишда хато!"));
     };
 </script>
+
 </body>
 </html>
