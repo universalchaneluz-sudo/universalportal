@@ -3,251 +3,308 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universal Media | Фильм Портал</title>
-    <!-- Firebase V8 SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <title>Dashboard - Universal Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --bg: #0a0a0f;
-            --card: #16161e;
-            --gold: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
-            --gold-solid: #f6d365;
-            --text: #f1f5f9;
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --dark: #212529;
+            --bg: #f8f9fa;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 50px; }
-        header { background: var(--card); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(246, 211, 101, 0.2); position: sticky; top: 0; z-index: 100; }
+
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
         
-        .logo-container { display: flex; align-items: center; text-decoration: none; gap: 10px; }
-        .logo-icon { width: 35px; height: 35px; background: var(--gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #16161e; font-weight: bold; font-size: 22px; }
-        .logo-text { font-size: 24px; font-weight: bold; background: var(--gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; text-transform: uppercase; }
+        #login-section { height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+        .login-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 100%; max-width: 350px; text-align: center; }
 
-        .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; display: inline-block; text-decoration: none; }
-        .btn-gold { background: var(--gold); color: #000; }
-        .btn-danger { background: #ef4444; color: white; }
-
-        .admin-panel { display: none; max-width: 700px; margin: 20px auto; background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid rgba(246, 211, 101, 0.3); }
-        .input-group { margin-bottom: 15px; }
-        .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 12px; background: #000; border: 1px solid #334155; color: white; border-radius: 8px; box-sizing: border-box; outline: none; }
-
-        .container { padding: 20px 5%; }
-        .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
-        .movie-card { background: var(--card); border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .admin-container { display: none; width: 100%; max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .header-box { background: white; padding: 20px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; }
         
-        .video-container { position: relative; width: 100%; padding-top: 56.25%; background: #000; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        @media (max-width: 850px) { .grid-layout { grid-template-columns: 1fr; } }
 
-        .movie-info { padding: 15px; text-align: center; }
-        .movie-info h3 { color: var(--gold-solid); margin: 0 0 10px 0; font-size: 1.1rem; }
-        
-        .stats { display: flex; justify-content: space-around; padding: 10px; background: rgba(0,0,0,0.3); font-size: 13px; color: #94a3b8; border-top: 1px solid rgba(255,255,255,0.05); }
-        .stats span { cursor: pointer; transition: 0.3s; padding: 5px 10px; border-radius: 5px; }
-        .stats span:hover { background: rgba(255,255,255,0.1); color: var(--gold-solid); }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        .card-title { font-size: 18px; font-weight: bold; margin-bottom: 20px; color: var(--dark); display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: var(--card); padding: 40px; border-radius: 25px; border: 2px solid var(--gold-solid); width: 300px; text-align: center; }
+        .btn { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+        .btn-blue { background: var(--primary); color: white; }
+        .btn-red { background: var(--danger); color: white; }
+        .btn-green { background: #2ecc71; color: white; }
+        .btn-outline { border: 2px solid #ddd; background: transparent; color: #666; }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        input, select, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; outline: none; transition: 0.3s; box-sizing: border-box; }
+        input:focus { border-color: var(--primary); background: #fff; }
+
+        .post-list { max-height: 600px; overflow-y: auto; }
+        .post-item { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #f0f0f0; transition: 0.3s; }
+        .post-item:hover { background: #fcfcfc; }
+        .post-info { flex-grow: 1; }
+        .post-info h4 { margin: 0 0 5px 0; font-size: 15px; }
+        .post-info small { color: #888; }
+        .action-btns { display: flex; gap: 5px; }
+        .btn-sm { padding: 6px 10px; border-radius: 6px; font-size: 12px; }
+
+        .status-msg { font-size: 12px; color: var(--primary); font-weight: bold; margin-bottom: 10px; display: none; }
     </style>
 </head>
 <body>
 
-<header>
-    <a href="#" class="logo-container">
-        <div class="logo-icon">U</div>
-        <div class="logo-text">UNIVERSAL MEDIA</div>
-    </a>
-    <div id="navBtns">
-        <button class="btn btn-gold" onclick="openLogin()">Шахсий кабинет</button>
-    </div>
-</header>
-
-<div id="adminPanel" class="admin-panel">
-    <h2 style="color: var(--gold-solid); text-align: center;" id="formTitle">Фильм қўшиш</h2>
-    <input type="hidden" id="editKey">
-    <div class="input-group"><input type="text" id="mName" placeholder="Фильм номи"></div>
-    <div class="input-group"><textarea id="mEmbed" rows="4" placeholder="<iframe> кодни тўлиқ жойланг"></textarea></div>
-    <div class="input-group">
-        <select id="mGenre">
-            <option value="Боевик">Боевик</option>
-            <option value="Детектив">Детектив</option>
-            <option value="Триллер">Триллер</option>
-            <option value="Ўзбек фильм">Ўзбек фильм</option>
-            <option value="Комедия">Комедия</option>
-            <option value="Фантастика">Фантастика</option>
-            <option value="Ретро">Ретро</option>
-            <option value="Ужас">Ужас</option>
-            <option value="Ўзбек ретро">Ўзбек ретро</option>
-            <option value="Ўзбек тилига таржима">Ўзбек тилида таржима фильмлар</option>
-        </select>
-    </div>
-    <button class="btn btn-gold" style="width: 100%;" onclick="saveToFirebase()">Серверга сақлаш</button>
-    <button class="btn" style="width: 100%; margin-top: 10px; color:#aaa; background:#333;" onclick="closeAdmin()">Ёпиш</button>
-</div>
-
-<div class="container">
-    <div class="movie-grid" id="movieGrid"></div>
-</div>
-
-<div id="loginModal" class="modal">
-    <div class="modal-content">
-        <h2 style="color: var(--gold-solid);">Админ Кириш</h2>
-        <input type="password" id="passInput" style="width:100%; padding:12px; margin:20px 0; background:#000; color:white; border:1px solid var(--gold-solid); border-radius:8px; text-align:center;" placeholder="****">
-        <button class="btn btn-gold" style="width:100%;" onclick="checkAuth()">Кириш</button>
-        <button class="btn" style="color:#666; margin-top:10px; background:none;" onclick="closeLogin()">Бекор қилиш</button>
+<div id="login-section">
+    <div class="login-card">
+        <i class="fas fa-user-shield" style="font-size: 60px; color: var(--primary); margin-bottom: 20px;"></i>
+        <h2 style="margin-bottom: 25px;">Админ Панел</h2>
+        <input type="email" id="email" placeholder="Email манзил">
+        <input type="password" id="pass" placeholder="Парол">
+        <button class="btn btn-blue" style="width:100%; justify-content: center;" id="loginBtn">КИРИШ</button>
     </div>
 </div>
 
-<script>
+<div id="admin-content" class="admin-container">
+    <div class="header-box">
+        <div>
+            <h2 style="margin:0">Dashboard</h2>
+            <small>Хуш келибсиз, Зоҳиджон Носирович</small>
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-outline" onclick="location.reload()"><i class="fas fa-sync"></i> Янгилаш</button>
+            <button class="btn btn-red" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Чиқиш</button>
+        </div>
+    </div>
+
+    <div class="grid-layout">
+        <div class="side-form">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-pen-fancy"></i> Мақола бошқаруви</div>
+                <input type="hidden" id="postId">
+                
+                <select id="cat">
+                    <option value="Янгиликлар">Янгиликлар</option>
+                    <option value="Табобат">Табобат</option>
+                    <option value="Кинотеатр">Кинотеатр</option>
+                    <option value="Клиплар">Мусиқий клиплар</option>
+                    <option value="Ҳикоялар">Ҳикоялар</option>
+                    <option value="Хангомалар">Хангомалар</option>
+                    <option value="Кулинария">Кулинария</option>
+                    <option value="Шеърият">Шеърият</option>
+                    <option value="Фойдали маслахат">Фойдали маслахатлар</option>
+                </select>
+
+                <input type="text" id="title" placeholder="Мақола сарлавҳаси">
+                
+                <div style="background: #fdfdfd; padding: 15px; border-radius: 10px; border: 1px dashed #ccc; margin-bottom: 15px;">
+                    <label style="font-size:12px; font-weight: bold; display: block; margin-bottom: 10px;">КОМПЬЮТЕРДАН РАСМ ЮКЛАШ:</label>
+                    <input type="file" id="postFile" accept="image/*" style="margin:0; padding:5px;">
+                    <div id="postStatus" class="status-msg">Юкланмоқда...</div>
+                </div>
+                
+                <input type="text" id="img" placeholder="Расм URL манзили">
+                <textarea id="videoIframe" rows="2" placeholder="Видео Iframe коди (YouTube embed код)"></textarea>
+                <textarea id="txt" rows="6" placeholder="Мақола матни..."></textarea>
+                
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-blue" style="flex:2; justify-content: center;" id="pubBtn">
+                        <i class="fas fa-paper-plane"></i> <span id="btnText">НАШР ҚИЛИШ</span>
+                    </button>
+                    <button class="btn btn-outline" id="cancelEdit" style="display:none;">Бекор қилиш</button>
+                </div>
+            </div>
+
+            <div class="card" style="border-left: 5px solid var(--success);">
+                <div class="card-title"><i class="fas fa-ad"></i> Тезкор реклама</div>
+                <input type="text" id="adImgUrl" placeholder="Реклама расм URL">
+                <input type="text" id="adLinkUrl" placeholder="Реклама линки">
+                <button class="btn btn-green" id="saveAd" style="width:100%; justify-content:center;">САҚЛАШ</button>
+            </div>
+        </div>
+
+        <div class="side-list">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-list"></i> Сўнгги мақолалар</div>
+                <div class="post-list" id="postsContainer">
+                    <p style="text-align:center; color:#999;">Юкланмоқда...</p>
+                </div>
+            </div>
+            
+            <div class="card" style="border-left: 5px solid #ff9800;">
+                <div class="card-title"><i class="fas fa-bullhorn"></i> Тезкор хабарнома</div>
+                <input type="text" id="noticeText" placeholder="Югурувчи сатр матни...">
+                <button class="btn btn-blue" id="saveNotice" style="background:#ff9800; width:100%; justify-content:center;">ЯНГИЛАШ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+
     const firebaseConfig = {
-        apiKey: "AIzaSyAV9u_Go4bIuDlC-vM3rH1T9MwLGwe9H3I",
-        authDomain: "universal-media-8f205.firebaseapp.com",
-        databaseURL: "https://universal-media-8f205-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "universal-media-8f205",
-        storageBucket: "universal-media-8f205.firebasestorage.app",
-        messagingSenderId: "21945142340",
-        appId: "1:21945142340:web:796e1d4e85566899b3c011"
+        apiKey: "AIzaSyCO079n6tlKKTXi1LjtSB1t0ddsxDMQUW4",
+        authDomain: "universal-portal-108b7.firebaseapp.com",
+        databaseURL: "https://universal-portal-108b7-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "universal-portal-108b7",
+        storageBucket: "universal-portal-108b7.appspot.com"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-    let isAdmin = localStorage.getItem('isMovieAdmin') === 'true';
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+    const storage = getStorage(app);
 
-    if(isAdmin) {
-        document.getElementById('navBtns').innerHTML = '<button class="btn btn-danger" onclick="logout()">Чиқиш</button>';
-        document.getElementById('adminPanel').style.display = 'block';
-    }
+    const emailInput = document.getElementById('email');
+    const passInput = document.getElementById('pass');
+    const titleInput = document.getElementById('title');
+    const catInput = document.getElementById('cat');
+    const imgInput = document.getElementById('img');
+    const videoInput = document.getElementById('videoIframe');
+    const txtInput = document.getElementById('txt');
+    const postIdInput = document.getElementById('postId');
 
-    // МАЪЛУМОТЛАРНИ ЧИҚАРИШ
-    database.ref('movies').on('value', (snapshot) => {
-        const movies = snapshot.val() || {};
-        const grid = document.getElementById('movieGrid');
-        grid.innerHTML = '';
+    // AUTH
+    document.getElementById('loginBtn').onclick = () => {
+        signInWithEmailAndPassword(auth, emailInput.value, passInput.value).catch(e => alert("Логин ёки парол хато!"));
+    };
 
-        Object.keys(movies).reverse().forEach(key => {
-            const m = movies[key];
-            let videoHtml = m.embed;
-            if(videoHtml.startsWith('B64:')) {
-                videoHtml = decodeURIComponent(atob(videoHtml.replace('B64:', '')));
-            }
-
-            const movieCard = document.createElement('div');
-            movieCard.className = 'movie-card';
-            movieCard.innerHTML = `
-                <div class="video-container" id="vid-${key}"></div>
-                <div class="movie-info">
-                    <h3>${m.name}</h3>
-                    <p style="color:#64748b; font-size:12px;">#${m.genre}</p>
-                </div>
-                <div class="stats">
-                    <span title="Кўришлар сони">👁 ${m.views || 0}</span>
-                    <span onclick="addLike('${key}')" title="Лайк босиш">❤️ ${m.likes || 0}</span>
-                </div>
-                ${isAdmin ? `
-                    <div style="display:flex; gap:5px; padding:10px; border-top:1px solid #333;">
-                        <button class="btn btn-gold" style="flex:1; font-size:11px;" onclick="prepareEdit('${key}')">Таҳрир</button>
-                        <button class="btn btn-danger" style="flex:1; font-size:11px;" onclick="deleteMovie('${key}')">Ўчириш</button>
-                    </div>
-                ` : ''}
-            `;
-            grid.appendChild(movieCard);
-            document.getElementById(`vid-${key}`).innerHTML = videoHtml;
-            
-            // Просмотрни ошириш (агар саҳифа янгиланса)
-            increaseView(key);
-        });
+    onAuthStateChanged(auth, u => {
+        document.getElementById('login-section').style.display = u ? 'none' : 'flex';
+        document.getElementById('admin-content').style.display = u ? 'block' : 'none';
+        if(u) loadPosts();
     });
 
-    // Лайк қўшиш функцияси
-    function addLike(key) {
-        const likeRef = database.ref('movies/' + key + '/likes');
-        likeRef.transaction((currentLikes) => {
-            return (currentLikes || 0) + 1;
-        });
-    }
+    document.getElementById('logoutBtn').onclick = () => signOut(auth);
 
-    // Просмотрни ошириш функцияси (саҳифа юкланганда 1 марта ишлайди)
-    let viewedMovies = new Set();
-    function increaseView(key) {
-        if(!viewedMovies.has(key)) {
-            const viewRef = database.ref('movies/' + key + '/views');
-            viewRef.transaction((currentViews) => {
-                return (currentViews || 0) + 1;
-            });
-            viewedMovies.add(key);
+    // IMAGE UPLOAD
+    document.getElementById('postFile').onchange = async (e) => {
+        const file = e.target.files[0];
+        if(!file) return;
+        const status = document.getElementById('postStatus');
+        status.style.display = "block";
+        status.innerText = "Юкланмоқда...";
+        const fileRef = sRef(storage, 'posts/' + Date.now() + "_" + file.name);
+        try {
+            const snap = await uploadBytes(fileRef, file);
+            const url = await getDownloadURL(snap.ref);
+            imgInput.value = url;
+            status.innerText = "✅ Расм юкланди!";
+        } catch(e) { 
+            alert("Юклашда хато!"); 
+            status.innerText = "❌ Хатолик юз берди";
         }
-    }
+    };
 
-    function saveToFirebase() {
-        const name = document.getElementById('mName').value;
-        const embed = document.getElementById('mEmbed').value;
-        const genre = document.getElementById('mGenre').value;
-        const key = document.getElementById('editKey').value;
+    // SAVE/UPDATE POST
+    document.getElementById('pubBtn').onclick = () => {
+        const id = postIdInput.value;
+        const data = {
+            title: titleInput.value,
+            image: imgInput.value,
+            video: videoInput.value,
+            category: catInput.value,
+            content: txtInput.value,
+            time: new Date().toLocaleString('uz-UZ')
+        };
 
-        if(!name || !embed) { alert("Маълумот тўлиқ эмас!"); return; }
-        const safeEmbed = "B64:" + btoa(encodeURIComponent(embed));
-        const movieData = { name, embed: safeEmbed, genre };
+        if(!data.title || !data.content) return alert("Сарлавҳа ва матн шарт!");
 
-        if(key) {
-            database.ref('movies/' + key).update(movieData).then(() => {
-                alert("Янгиланди!");
+        if(id) {
+            update(ref(db, 'all_posts/' + id), data).then(() => {
+                alert("Мақола янгиланди!");
                 resetForm();
             });
         } else {
-            database.ref('movies').push({
-                ...movieData, views: 0, likes: 0
-            }).then(() => {
-                alert("Сақланди!");
+            push(ref(db, 'all_posts'), data).then(() => {
+                alert("Нашр қилинди!");
                 resetForm();
             });
         }
-    }
+    };
 
-    function prepareEdit(key) {
-        database.ref('movies/' + key).once('value').then(s => {
-            const m = s.val();
-            document.getElementById('mName').value = m.name;
-            let originalEmbed = m.embed;
-            if(originalEmbed.startsWith('B64:')) {
-                originalEmbed = decodeURIComponent(atob(originalEmbed.replace('B64:', '')));
+    // LOAD POSTS
+    function loadPosts() {
+        onValue(ref(db, 'all_posts'), (snapshot) => {
+            const container = document.getElementById('postsContainer');
+            container.innerHTML = "";
+            const data = snapshot.val();
+            if(data) {
+                Object.keys(data).reverse().forEach(key => {
+                    const post = data[key];
+                    container.innerHTML += `
+                        <div class="post-item">
+                            <div class="post-info">
+                                <h4>${post.title}</h4>
+                                <small>${post.category} | ${post.time}</small>
+                            </div>
+                            <div class="action-btns">
+                                <button class="btn btn-blue btn-sm" onclick="editPost('${key}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-red btn-sm" onclick="deletePost('${key}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                container.innerHTML = "<p style='text-align:center'>Мақолалар мавжуд эмас.</p>";
             }
-            document.getElementById('mEmbed').value = originalEmbed;
-            document.getElementById('mGenre').value = m.genre;
-            document.getElementById('editKey').value = key;
-            document.getElementById('formTitle').innerText = "Таҳрирлаш";
-            document.getElementById('adminPanel').style.display = 'block';
-            window.scrollTo({top: 0, behavior: 'smooth'});
         });
     }
 
-    function deleteMovie(key) {
-        if(confirm("Ўчирилсинми?")) database.ref('movies/' + key).remove();
-    }
+    // GLOBAL FUNCTIONS FOR EDIT/DELETE
+    window.editPost = (id) => {
+        onValue(ref(db, 'all_posts/' + id), (snapshot) => {
+            const post = snapshot.val();
+            if(post) {
+                postIdInput.value = id;
+                titleInput.value = post.title;
+                imgInput.value = post.image || "";
+                catInput.value = post.category;
+                txtInput.value = post.content;
+                videoInput.value = post.video || "";
+                
+                document.getElementById('btnText').innerText = "ЎЗГАРТИРИШНИ САҚЛАШ";
+                document.getElementById('cancelEdit').style.display = "block";
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }
+        }, {onlyOnce: true});
+    };
 
-    function checkAuth() {
-        if(document.getElementById('passInput').value === "1975") {
-            localStorage.setItem('isMovieAdmin', 'true');
-            location.reload();
-        } else { alert("Пароль хато!"); }
-    }
+    window.deletePost = (id) => {
+        if(confirm("Ростан ҳам ушбу мақолани ўчирмоқчимисиз?")) {
+            remove(ref(db, 'all_posts/' + id));
+        }
+    };
 
     function resetForm() {
-        document.getElementById('mName').value = "";
-        document.getElementById('mEmbed').value = "";
-        document.getElementById('editKey').value = "";
-        document.getElementById('formTitle').innerText = "Фильм қўшиш";
-        document.getElementById('adminPanel').style.display = isAdmin ? 'block' : 'none';
+        postIdInput.value = "";
+        titleInput.value = "";
+        imgInput.value = "";
+        txtInput.value = "";
+        videoInput.value = "";
+        document.getElementById('btnText').innerText = "НАШР ҚИЛИШ";
+        document.getElementById('cancelEdit').style.display = "none";
+        document.getElementById('postStatus').style.display = "none";
+        document.getElementById('postFile').value = "";
     }
 
-    function openLogin() { 
-        if(isAdmin) {
-            let p = document.getElementById('adminPanel');
-            p.style.display = p.style.display === 'none' ? 'block' : 'none';
-        } else {
-            document.getElementById('loginModal').style.display = 'flex'; 
-        }
-    }
-    function closeLogin() { document.getElementById('loginModal').style.display = 'none'; }
-    function closeAdmin() { document.getElementById('adminPanel').style.display = 'none'; }
-    function logout() { localStorage.removeItem('isMovieAdmin'); location.reload(); }
+    document.getElementById('cancelEdit').onclick = resetForm;
+
+    // ADS & NOTICE
+    document.getElementById('saveAd').onclick = () => {
+        set(ref(db, 'ads'), {
+            img: document.getElementById('adImgUrl').value, 
+            link: document.getElementById('adLinkUrl').value
+        }).then(() => alert("Реклама сақланди!"));
+    };
+    
+    document.getElementById('saveNotice').onclick = () => {
+        set(ref(db, 'site_notice'), {
+            text: document.getElementById('noticeText').value
+        }).then(() => alert("Хабар янгиланди!"));
+    };
 </script>
 </body>
 </html>
